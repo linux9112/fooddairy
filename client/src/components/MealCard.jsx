@@ -62,22 +62,22 @@ export default function MealCard({
     setErrorMsg('');
 
     if (!status) {
-      setErrorMsg('Please select whether you ate (Yes or No).');
+      setErrorMsg('Khana Khae? Please select Ha or Nahi.');
       return;
     }
 
     if (status === 'yes') {
       if (!time) {
-        setErrorMsg('Please specify what time you ate (Kitna baje?).');
+        setErrorMsg('Kitna baje? Please specify what time you ate.');
         return;
       }
       if (!details.trim()) {
-        setErrorMsg('Please specify what you ate (Kya khae?).');
+        setErrorMsg('Kya khae? Please write what you ate.');
         return;
       }
     } else {
       if (!details.trim()) {
-        setErrorMsg("Please specify why you didn't eat (Kyu nahi khae?).");
+        setErrorMsg('Kyu nahi khae? Please write reason.');
         return;
       }
     }
@@ -156,16 +156,19 @@ export default function MealCard({
               {isAte ? (
                 <>
                   <div className="summary-heading">
-                    <span>✓</span>
-                    <span>Ate at {record.formattedTime || formatDisplayTime(record.time)}</span>
+                    <span>✓ Khae hai</span>
+                    {(record.formattedTime || record.time) && (
+                      <span style={{ fontWeight: 400, opacity: 0.9 }}>
+                        ({record.formattedTime || formatDisplayTime(record.time)})
+                      </span>
+                    )}
                   </div>
                   <div className="summary-details">{record.details}</div>
                 </>
               ) : (
                 <>
                   <div className="summary-heading">
-                    <span>✕</span>
-                    <span>Didn't eat</span>
+                    <span>✕ Nahi khae</span>
                   </div>
                   <div className="summary-details">{record.details}</div>
                 </>
@@ -185,23 +188,23 @@ export default function MealCard({
             </div>
           )}
 
-          {/* Question: Did you eat? */}
+          {/* Question: Khana Khae? */}
           <div className="question-block">
-            <label className="question-label">Did you eat?</label>
+            <label className="question-label">Khana Khae?</label>
             <div className="yes-no-group">
               <button
                 type="button"
                 className={`toggle-btn ${status === 'yes' ? 'selected-yes' : ''}`}
                 onClick={() => setStatus('yes')}
               >
-                <span>✓</span> Yes
+                <span>✓</span> Ha
               </button>
               <button
                 type="button"
                 className={`toggle-btn ${status === 'no' ? 'selected-no' : ''}`}
                 onClick={() => setStatus('no')}
               >
-                <span>✕</span> No
+                <span>✕</span> Nahi
               </button>
             </div>
           </div>
@@ -211,7 +214,7 @@ export default function MealCard({
             <>
               <div className="question-block">
                 <label className="question-label" htmlFor={`${mealKey}-time`}>
-                  Kitna baje? <span className="question-sublabel">/ What time did you eat?</span>
+                  Kitna baje?
                 </label>
                 <input
                   id={`${mealKey}-time`}
@@ -225,12 +228,12 @@ export default function MealCard({
 
               <div className="question-block">
                 <label className="question-label" htmlFor={`${mealKey}-food`}>
-                  Kya khae? <span className="question-sublabel">/ What did you eat?</span>
+                  Kya khae?
                 </label>
                 <textarea
                   id={`${mealKey}-food`}
                   className="input-field"
-                  placeholder="e.g. Poha, banana and milk"
+                  placeholder=""
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
                   required
@@ -243,12 +246,12 @@ export default function MealCard({
           {status === 'no' && (
             <div className="question-block">
               <label className="question-label" htmlFor={`${mealKey}-reason`}>
-                Kyu nahi khae? <span className="question-sublabel">/ Why didn't you eat?</span>
+                Kyu nahi khae?
               </label>
               <textarea
                 id={`${mealKey}-reason`}
                 className="input-field"
-                placeholder="e.g. Wasn't hungry / fasting"
+                placeholder=""
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
                 required

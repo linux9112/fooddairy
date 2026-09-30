@@ -44,6 +44,14 @@ app.use('/api/reports', reportsRoutes);
 
 // Serve static frontend in production if built
 const clientDist = path.resolve(__dirname, '../client/dist');
+
+// Serve Service Worker with no-cache and root scope allowed
+app.get('/sw.js', (req, res) => {
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.sendFile(path.join(clientDist, 'sw.js'));
+});
+
 app.use(express.static(clientDist));
 
 // 404 Catch-All for unhandled API routes

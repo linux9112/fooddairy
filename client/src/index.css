@@ -62,13 +62,38 @@ body {
   margin-bottom: 1.25rem;
 }
 
+.brand-header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.brand-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(61, 52, 47, 0.08);
+  border: 1px solid var(--border-light);
+}
+
 .brand-title {
   font-family: var(--font-serif);
   font-size: 2.1rem;
   font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--text-main);
-  margin-bottom: 1rem;
+  margin-bottom: 0;
+  line-height: 1;
+}
+
+.nav-row-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .nav-bar {
@@ -104,6 +129,48 @@ body {
   color: var(--text-main);
   font-weight: 600;
   box-shadow: inset 0 0 0 1px var(--accent-pink);
+}
+
+.install-banner-row {
+  margin-top: 0.25rem;
+}
+
+.btn-install-app {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--accent-pink);
+  color: #7A3E4E;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(233, 168, 184, 0.15);
+  transition: all 0.2s ease;
+}
+
+.btn-install-app:hover {
+  background-color: var(--accent-pink-soft);
+  transform: translateY(-1px);
+}
+
+/* Subtle Edited Badge */
+.badge-edited {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem; /* 12px */
+  background-color: #F3E8E8;
+  color: #8A7B72;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin-left: 0.45rem;
+  vertical-align: middle;
+  line-height: 1.2;
 }
 
 /* Main Content Area */

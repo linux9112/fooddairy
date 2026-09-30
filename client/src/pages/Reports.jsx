@@ -76,12 +76,12 @@ export default function Reports() {
         <div
           className="progress-bar-ate"
           style={{ width: `${atePct}%` }}
-          title={`Ate: ${mealStat.ate}`}
+          title={`Khae hai: ${mealStat.ate}`}
         />
         <div
           className="progress-bar-skipped"
           style={{ width: `${skippedPct}%` }}
-          title={`Skipped: ${mealStat.skipped}`}
+          title={`Nahi khae: ${mealStat.skipped}`}
         />
         <div
           className="progress-bar-unrecorded"
@@ -186,8 +186,8 @@ export default function Reports() {
               <div className="stat-header">
                 <span className="stat-meal-label">🌅 Breakfast</span>
                 <div className="stat-badges-row">
-                  <span className="stat-badge-ate">✓ Ate: {meals.breakfast.ate}</span>
-                  <span className="stat-badge-skipped">✕ Skipped: {meals.breakfast.skipped}</span>
+                  <span className="stat-badge-ate">✓ Khae hai: {meals.breakfast.ate}</span>
+                  <span className="stat-badge-skipped">✕ Nahi khae: {meals.breakfast.skipped}</span>
                   <span className="stat-badge-unrecorded">— Not recorded: {meals.breakfast.unrecorded}</span>
                 </div>
               </div>
@@ -199,8 +199,8 @@ export default function Reports() {
               <div className="stat-header">
                 <span className="stat-meal-label">☀️ Lunch</span>
                 <div className="stat-badges-row">
-                  <span className="stat-badge-ate">✓ Ate: {meals.lunch.ate}</span>
-                  <span className="stat-badge-skipped">✕ Skipped: {meals.lunch.skipped}</span>
+                  <span className="stat-badge-ate">✓ Khae hai: {meals.lunch.ate}</span>
+                  <span className="stat-badge-skipped">✕ Nahi khae: {meals.lunch.skipped}</span>
                   <span className="stat-badge-unrecorded">— Not recorded: {meals.lunch.unrecorded}</span>
                 </div>
               </div>
@@ -212,8 +212,8 @@ export default function Reports() {
               <div className="stat-header">
                 <span className="stat-meal-label">🌙 Dinner</span>
                 <div className="stat-badges-row">
-                  <span className="stat-badge-ate">✓ Ate: {meals.dinner.ate}</span>
-                  <span className="stat-badge-skipped">✕ Skipped: {meals.dinner.skipped}</span>
+                  <span className="stat-badge-ate">✓ Khae hai: {meals.dinner.ate}</span>
+                  <span className="stat-badge-skipped">✕ Nahi khae: {meals.dinner.skipped}</span>
                   <span className="stat-badge-unrecorded">— Not recorded: {meals.dinner.unrecorded}</span>
                 </div>
               </div>
@@ -236,12 +236,12 @@ export default function Reports() {
 
               <div className="opp-stat-card">
                 <div className="opp-num" style={{ color: 'var(--ate-green)' }}>{summary.ate}</div>
-                <div className="opp-label">Ate</div>
+                <div className="opp-label">Khae hai</div>
               </div>
 
               <div className="opp-stat-card">
                 <div className="opp-num" style={{ color: 'var(--skipped-rose)' }}>{summary.skipped}</div>
-                <div className="opp-label">Skipped</div>
+                <div className="opp-label">Nahi khae</div>
               </div>
 
               <div className="opp-stat-card">

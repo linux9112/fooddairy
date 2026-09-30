@@ -66,7 +66,12 @@ export default function Today({ customDate, onBackToDiary }) {
             </button>
           </div>
         )}
-        <h2 className="date-primary">{formatDisplayDate(targetDate)}</h2>
+        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+          <h2 className="date-primary">{formatDisplayDate(targetDate)}</h2>
+          {dayRecord?.isEdited && (
+            <span className="badge-edited">Edited</span>
+          )}
+        </div>
         <div className="date-secondary">{formatDayOfWeek(targetDate)}</div>
       </div>
 

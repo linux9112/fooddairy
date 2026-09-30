@@ -85,9 +85,14 @@ export default function Diary({ initialDate, onEditDay }) {
         </button>
 
         <div style={{ textAlign: 'center', minWidth: '220px' }}>
-          <h2 className="date-primary" style={{ fontSize: '1.5rem', marginBottom: '0.1rem' }}>
-            {formatDisplayDate(currentDate)}
-          </h2>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+            <h2 className="date-primary" style={{ fontSize: '1.5rem', marginBottom: '0.1rem' }}>
+              {formatDisplayDate(currentDate)}
+            </h2>
+            {record?.isEdited && (
+              <span className="badge-edited">Edited</span>
+            )}
+          </div>
           <div className="date-secondary">
             {formatDayOfWeek(currentDate)}
             {!isToday && (
@@ -166,16 +171,19 @@ export default function Diary({ initialDate, onEditDay }) {
                   {meals.breakfast.status === 'yes' ? (
                     <>
                       <div className="diary-tag-ate">
-                        <span>✓</span>
-                        <span>Ate at {meals.breakfast.formattedTime || formatDisplayTime(meals.breakfast.time)}</span>
+                        <span>✓ Khae hai</span>
+                        {(meals.breakfast.formattedTime || meals.breakfast.time) && (
+                          <span style={{ fontWeight: 400, opacity: 0.9 }}>
+                            ({meals.breakfast.formattedTime || formatDisplayTime(meals.breakfast.time)})
+                          </span>
+                        )}
                       </div>
                       <p className="diary-details-text">{meals.breakfast.details}</p>
                     </>
                   ) : meals.breakfast.status === 'no' ? (
                     <>
                       <div className="diary-tag-skipped">
-                        <span>✕</span>
-                        <span>Didn't eat</span>
+                        <span>✕ Nahi khae</span>
                       </div>
                       <p className="diary-details-text">{meals.breakfast.details}</p>
                     </>
@@ -195,16 +203,19 @@ export default function Diary({ initialDate, onEditDay }) {
                   {meals.lunch.status === 'yes' ? (
                     <>
                       <div className="diary-tag-ate">
-                        <span>✓</span>
-                        <span>Ate at {meals.lunch.formattedTime || formatDisplayTime(meals.lunch.time)}</span>
+                        <span>✓ Khae hai</span>
+                        {(meals.lunch.formattedTime || meals.lunch.time) && (
+                          <span style={{ fontWeight: 400, opacity: 0.9 }}>
+                            ({meals.lunch.formattedTime || formatDisplayTime(meals.lunch.time)})
+                          </span>
+                        )}
                       </div>
                       <p className="diary-details-text">{meals.lunch.details}</p>
                     </>
                   ) : meals.lunch.status === 'no' ? (
                     <>
                       <div className="diary-tag-skipped">
-                        <span>✕</span>
-                        <span>Didn't eat</span>
+                        <span>✕ Nahi khae</span>
                       </div>
                       <p className="diary-details-text">{meals.lunch.details}</p>
                     </>
@@ -224,16 +235,19 @@ export default function Diary({ initialDate, onEditDay }) {
                   {meals.dinner.status === 'yes' ? (
                     <>
                       <div className="diary-tag-ate">
-                        <span>✓</span>
-                        <span>Ate at {meals.dinner.formattedTime || formatDisplayTime(meals.dinner.time)}</span>
+                        <span>✓ Khae hai</span>
+                        {(meals.dinner.formattedTime || meals.dinner.time) && (
+                          <span style={{ fontWeight: 400, opacity: 0.9 }}>
+                            ({meals.dinner.formattedTime || formatDisplayTime(meals.dinner.time)})
+                          </span>
+                        )}
                       </div>
                       <p className="diary-details-text">{meals.dinner.details}</p>
                     </>
                   ) : meals.dinner.status === 'no' ? (
                     <>
                       <div className="diary-tag-skipped">
-                        <span>✕</span>
-                        <span>Didn't eat</span>
+                        <span>✕ Nahi khae</span>
                       </div>
                       <p className="diary-details-text">{meals.dinner.details}</p>
                     </>

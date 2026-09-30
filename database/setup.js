@@ -97,6 +97,14 @@ async function runMySQLSetup() {
   log('Executing schema.sql DDL...');
   await connection.query(sql);
 
+  // Check and apply is_edited column migration if missing
+  const [hasIsEdited] = await connection.query("SHOW COLUMNS FROM food_records LIKE 'is_edited';");
+  if (hasIsEdited.length === 0) {
+    log('Migrating food_records: Adding is_edited column...');
+    await connection.query("ALTER TABLE food_records ADD COLUMN is_edited BOOLEAN NOT NULL DEFAULT FALSE;");
+    log('Added is_edited column successfully.');
+  }
+
   // Verify columns
   const [columns] = await connection.query('SHOW COLUMNS FROM food_records;');
   log(`Table 'food_records' verified with ${columns.length} columns:`);
@@ -108,8 +116,8 @@ async function runMySQLSetup() {
     log('Running verification sanity test (insert/select/delete)...');
     const testDate = '2099-12-31';
     await connection.query(
-      `INSERT INTO food_records (record_date, breakfast_status, breakfast_time, breakfast_details)
-       VALUES (?, 'yes', '08:00:00', 'Sanity test food')
+      `INSERT INTO food_records (record_date, breakfast_status, breakfast_time, breakfast_details, is_edited)
+       VALUES (?, 'yes', '08:00:00', 'Sanity test food', 0)
        ON DUPLICATE KEY UPDATE breakfast_details = VALUES(breakfast_details)`,
       [testDate]
     );
@@ -145,6 +153,7 @@ function runSQLiteSetup() {
     dinner_status TEXT CHECK(dinner_status IN ('yes', 'no') OR dinner_status IS NULL) DEFAULT NULL,
     dinner_time TEXT DEFAULT NULL,
     dinner_details TEXT DEFAULT NULL,
+    is_edited INTEGER NOT NULL DEFAULT 0,
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now'))
   );
@@ -153,7 +162,14 @@ function runSQLiteSetup() {
 
   db.exec(sqliteDdl);
 
-  const columns = db.prepare('PRAGMA table_info(food_records)').all();
+  let columns = db.prepare('PRAGMA table_info(food_records)').all();
+  const hasCol = columns.some(c => c.name === 'is_edited');
+  if (!hasCol) {
+    db.exec('ALTER TABLE food_records ADD COLUMN is_edited INTEGER NOT NULL DEFAULT 0;');
+    columns = db.prepare('PRAGMA table_info(food_records)').all();
+    log("SQLite table 'food_records' migrated: added is_edited column.");
+  }
+
   log(`SQLite table 'food_records' verified with ${columns.length} columns:`);
   columns.forEach(col => {
     log(`  - ${col.name} (${col.type}, pk: ${col.pk}, notnull: ${col.notnull}, dflt_value: ${col.dflt_value})`);

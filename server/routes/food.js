@@ -34,6 +34,7 @@ router.get('/:date', async (req, res, next) => {
               breakfast_status, breakfast_time, breakfast_details,
               lunch_status, lunch_time, lunch_details,
               dinner_status, dinner_time, dinner_details,
+              is_edited,
               created_at, updated_at
        FROM food_records
        WHERE record_date = ?`,
@@ -45,6 +46,7 @@ router.get('/:date', async (req, res, next) => {
         success: true,
         date,
         recordedCount: 0,
+        isEdited: false,
         meals: {
           breakfast: { status: null, time: null, details: null },
           lunch: { status: null, time: null, details: null },
@@ -65,6 +67,7 @@ router.get('/:date', async (req, res, next) => {
       success: true,
       date: row.record_date,
       recordedCount,
+      isEdited: Boolean(row.is_edited),
       meals: {
         breakfast: {
           status: row.breakfast_status,
@@ -120,12 +123,14 @@ router.put('/:date/:meal', async (req, res, next) => {
     }
 
     const { status, time, details } = req.body;
-    const statusLower = (status || '').toLowerCase().trim();
+    let statusLower = (status || '').toLowerCase().trim();
+    if (statusLower === 'ha') statusLower = 'yes';
+    if (statusLower === 'nahi') statusLower = 'no';
 
     if (statusLower !== 'yes' && statusLower !== 'no') {
       return res.status(400).json({
         success: false,
-        error: 'Meal status must be either "yes" or "no".'
+        error: 'Meal status must be either "yes" ("ha") or "no" ("nahi").'
       });
     }
 
@@ -163,21 +168,53 @@ router.put('/:date/:meal', async (req, res, next) => {
       }
     }
 
-    // Atomic Upsert: Inserts if date doesn't exist, updates ONLY this meal if it exists
     const statusCol = `${mealLower}_status`;
     const timeCol = `${mealLower}_time`;
     const detailsCol = `${mealLower}_details`;
 
+    // Check existing record to determine if this is an edit of an already saved entry
+    const [existingRows] = await db.query(
+      `SELECT is_edited, ${statusCol}, ${timeCol}, ${detailsCol} FROM food_records WHERE record_date = ?`,
+      [date]
+    );
+
+    let shouldBeEdited = false;
+    if (existingRows && existingRows.length > 0) {
+      const existing = existingRows[0];
+      const wasAlreadyEdited = Boolean(existing.is_edited);
+      const wasMealPreviouslyRecorded = existing[statusCol] !== null;
+
+      if (wasAlreadyEdited) {
+        shouldBeEdited = true;
+      } else if (wasMealPreviouslyRecorded) {
+        const existingShortTime = existing[timeCol] ? existing[timeCol].slice(0, 5) : null;
+        const newShortTime = normalizedTime ? normalizedTime.slice(0, 5) : null;
+        const existingDetails = (existing[detailsCol] || '').trim();
+        const newDetails = rawDetails.trim();
+        const existingStatus = existing[statusCol];
+
+        const hasChanged = (existingStatus !== statusLower) ||
+                           (existingShortTime !== newShortTime) ||
+                           (existingDetails !== newDetails);
+        
+        if (hasChanged) {
+          shouldBeEdited = true;
+        }
+      }
+    }
+
+    // Atomic Upsert: Inserts if date doesn't exist, updates ONLY this meal if it exists
     const sql = `
-      INSERT INTO food_records (record_date, ${statusCol}, ${timeCol}, ${detailsCol})
-      VALUES (?, ?, ?, ?)
+      INSERT INTO food_records (record_date, ${statusCol}, ${timeCol}, ${detailsCol}, is_edited)
+      VALUES (?, ?, ?, ?, ?)
       ON DUPLICATE KEY UPDATE
         ${statusCol} = VALUES(${statusCol}),
         ${timeCol} = VALUES(${timeCol}),
-        ${detailsCol} = VALUES(${detailsCol})
+        ${detailsCol} = VALUES(${detailsCol}),
+        is_edited = CASE WHEN VALUES(is_edited) = 1 THEN 1 ELSE is_edited END
     `;
 
-    await db.query(sql, [date, statusLower, normalizedTime, rawDetails]);
+    await db.query(sql, [date, statusLower, normalizedTime, rawDetails, shouldBeEdited ? 1 : 0]);
 
     const formattedTime = normalizedTime ? formatTime12h(normalizedTime) : null;
     const shortTime = normalizedTime ? normalizedTime.slice(0, 5) : null;
@@ -190,6 +227,7 @@ router.put('/:date/:meal', async (req, res, next) => {
       time: shortTime,
       formattedTime: formattedTime,
       details: rawDetails,
+      isEdited: shouldBeEdited,
       record: {
         date,
         meal: mealLower,
@@ -197,7 +235,8 @@ router.put('/:date/:meal', async (req, res, next) => {
         time: shortTime,
         formattedTime: formattedTime,
         rawTime: normalizedTime,
-        details: rawDetails
+        details: rawDetails,
+        isEdited: shouldBeEdited
       }
     });
   } catch (err) {
