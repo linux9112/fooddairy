@@ -21,6 +21,12 @@
     "build": "npm run build --prefix client",
     "start": "npm run start --prefix server"
   },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mysql2": "^3.12.0"
+  },
   "devDependencies": {
     "concurrently": "^9.1.2"
   },
