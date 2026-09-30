@@ -1,0 +1,41 @@
+{
+  "name": "food-diary",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimalist personal food logging web application with React, Express, and MySQL/SQLite persistence.",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "setup": "npm install && npm install --prefix server && node -e \"const fs=require('fs'); if(!fs.existsSync('.env')&&fs.existsSync('.env.example')) fs.copyFileSync('.env.example','.env'); if(fs.existsSync('client/package.json')) { const {execSync}=require('child_process'); execSync('npm install --prefix client', {stdio:'inherit'}); }\" && npm run db:setup",
+    "db:setup": "node database/setup.js",
+    "db:seed": "node database/seed.js",
+    "dev": "concurrently -k -p \"[{name}]\" -n \"backend,frontend\" -c \"blue.bold,magenta.bold\" \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "test": "node tests/verify_api.js",
+    "test:api": "node tests/verify_api.js",
+    "test:db": "node --test tests/unit/db.test.js",
+    "test:unit": "node --test tests/unit/**/*.test.js",
+    "build": "npm run build --prefix client",
+    "start": "npm run start --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "keywords": [
+    "food-diary",
+    "meal-tracker",
+    "react",
+    "express",
+    "mysql",
+    "vite"
+  ],
+  "author": "",
+  "license": "ISC"
+}
